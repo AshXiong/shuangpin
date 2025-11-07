@@ -208,6 +208,10 @@ function editConfig() {
     align-items: baseline;
     max-height: 6em;
     margin-bottom: 2px;
+    overflow: hidden;
+    @media (max-width: 576px) {
+      z-index: 200;
+    }
 
     .setting-name {
       height: 2em;
@@ -264,6 +268,7 @@ function editConfig() {
     @media (max-width: 576px) {
       position: absolute;
       bottom: var(--app-padding);
+      z-index: 199;
     }
   }
 }
