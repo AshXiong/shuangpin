@@ -1,0 +1,51 @@
+@primary-color: #ab2b2b;
+
+// css 原生变量
+.light {
+  --primary-color: @primary-color;
+  --black: #000;
+  --gray-2: #222;
+  --gray-4: #444;
+  --gray-6: #666;
+  --gray-9: #999;
+  --gray-a: #aaa;
+  --white: white;
+  --gray-001: rgba(0, 0, 0, 0.01);
+  --gray-002: rgba(0, 0, 0, 0.02);
+  --gray-003: rgba(0, 0, 0, 0.03);
+  --gray-010: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --primary-color: @primary-color;
+  --black: #aaa;
+  --gray-2: #222;
+  --gray-4: #444;
+  --gray-6: #666;
+  --gray-9: #999;
+  --gray-a: #aaa;
+  --white: #222;
+  --gray-001: rgba(255, 255, 255, 0.01);
+  --gray-002: rgba(255, 255, 255, 0.02);
+  --gray-003: rgba(255, 255, 255, 0.03);
+  --gray-010: rgba(255, 255, 255, 0.1);
+
+  img,
+  svg {
+    filter: invert(1);
+  }
+}
+
+:root {
+  .light();
+
+  * {
+    transition: all ease 0.3s;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    .dark();
+  }
+}
