@@ -9,12 +9,12 @@ import { RouteRecordRaw } from "vue-router";
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: "/progressive-mode",
+    path: "/",
     name: "渐进模式",
     component: ProgressiveMode,
   },
   {
-    path: "/",
+    path: "/random-mode",
     name: "随机模式",
     component: RandomMode,
   },

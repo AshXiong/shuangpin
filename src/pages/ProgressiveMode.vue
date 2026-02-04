@@ -3,7 +3,12 @@
  * 导入组件、工具函数、Store 以及 Vue 相关 API
  */
 import SingleMode from "../components/SingleMode.vue"; // 引入单机模式展示组件
-import { followMap, followKeys, leadKeys,progressiveKeys } from "../utils/pinyin"; // 引入拼音映射表和对应的键名列表
+import {
+  followMap,
+  followKeys,
+  leadKeys,
+  progressiveKeys,
+} from "../utils/pinyin"; // 引入拼音映射表和对应的键名列表
 import { useStore } from "../store"; // 引入 Pinia 状态管理
 import { computed } from "vue"; // 引入计算属性
 import { storeToRefs } from "pinia"; // 引入 Pinia 的解构响应式工具
@@ -12,55 +17,72 @@ import { getHanziOf } from "../utils/hanzi";
 // 1. 初始化 store 并通过 storeToRefs 保持 currentProgressiveIndex 的响应式
 const store = useStore();
 const { currentProgressiveIndex } = storeToRefs(store);
-/**
- * 计算属性：followList
- * 根据当前的索引 (currentFollowIndex) 从拼音映射表中获取待练习的拼音数据
- */
-/**
- * 步骤一：根据当前进度索引，获取已激活的音节（键名）列表
- */
+interface PinyinItem {
+  lead: string; // 声母
+  follow: string; // 韵母
+  full: string; // 完整带调拼音
+}
+
+interface WeightedPinyin extends PinyinItem {
+  characters: string[];
+  weight: number;
+}
 
 /**
- * 步骤二：将音节（键名表）转换为对应的 Value 数据表
- * 目标：仅匹配 (当前已激活声母 + 当前已激活韵母) 的交集组合
+ * 改进后的计算属性
  */
-
-const followList = computed(() => {
+const hanziList = computed((): string[] => {
   const index = currentProgressiveIndex.value;
   if (index < 0) return [];
 
-  // 1. 获取当前进度激活的所有 Key
-  const activeKeys = progressiveKeys.slice(0, index + 1);
+  // 1. 获取当前进度的 Key 列表
+  const activeKeys: string[] = progressiveKeys.slice(0, index + 1);
+  const latestKey = progressiveKeys[index]; // 当前最新学习的字母
 
-  // 2. 建立已激活声母的 Set
-  // 核心逻辑：除了包含 activeKeys 里的声母外，默认把 "" (空声母) 放入，
-  // 这样只要韵母被激活，对应的零声母音节（如 "a"）就能出来。
-  const activeLeads = new Set(activeKeys.filter((k) => leadKeys.includes(k)));
-  activeLeads.add(""); // 允许空声母
+  // 2. 准备声母校验集
+  const activeLeads = new Set<string>(
+    activeKeys.filter((k) => leadKeys.includes(k)),
+  );
+  activeLeads.add("");
 
-  // 3. 获取已激活的韵母
+  // 3. 筛选出所有符合条件的拼音并计算权重
   const activeFollows = activeKeys.filter((k) => followKeys.includes(k));
 
-  // 4. 从 followMap 中提取组合，并双向校验
-  return activeFollows.flatMap((fKey) => {
-    const list = followMap.get(fKey) ?? [];
+  const pinyinData: WeightedPinyin[] = activeFollows.flatMap((fKey) => {
+    const list: PinyinItem[] = followMap.get(fKey) ?? [];
 
-    // 只有当该组合的声母在已激活列表中，或者是空声母时才保留
-    return list.filter((pinyin) => activeLeads.has(pinyin.lead));
+    return list
+      .filter((p) => activeLeads.has(p.lead))
+      .map((p) => {
+        const chars = getHanziOf(p.full);
+        // 动态计算权重：如果是当前关卡新学的字母，权重设为 3，否则为 1
+        const isNew = p.lead === latestKey || p.follow === latestKey;
+        return {
+          ...p,
+          characters: chars,
+          weight: isNew ? 3 : 1,
+        };
+      })
+      .filter((p) => p.characters.length > 0); // 过滤无汉字的拼音
   });
+
+  // 4. 平衡化处理：保证每个拼音产出的汉字数量相对均衡
+  const FINAL_LIST: string[] = [];
+  const BASE_COUNT_PER_PINYIN = 4; // 每个拼音的基础出题数
+
+  pinyinData.forEach((item) => {
+    // 最终出题数 = 基础数 * 权重
+    const targetCount = BASE_COUNT_PER_PINYIN * item.weight;
+
+    for (let i = 0; i < targetCount; i++) {
+      // 使用取模运算符 (%) 循环获取汉字，解决“汉字少”导致的概率问题
+      const charIndex = i % item.characters.length;
+      FINAL_LIST.push(item.characters[charIndex]);
+    }
+  });
+
+  return FINAL_LIST;
 });
-
-/**
- * 计算属性：hanziList
- * 将获取到的拼音列表 (followList) 转化为对应的汉字数组
- */
-const hanziList = computed(() => {
-  // 使用 flatMap 替代 reduce + concat
-  // 它会自动遍历 leadList 并将 getHanziByPinyin 返回的数组“拍平”
-  return followList.value.flatMap((cur) => getHanziOf(cur.full));
-});
-
-
 </script>
 
 <template>
