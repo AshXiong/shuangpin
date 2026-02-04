@@ -9,6 +9,7 @@ import {
   onActivated,
   onDeactivated,
   ref,
+  watchEffect,
   watchPostEffect,
   computed,
 } from "vue";
@@ -93,7 +94,6 @@ function onMenuChange(i: number) {
   }
 }
 
-
 function onKeyPressed() {
   summary.value.onKeyPressed();
 }
@@ -138,8 +138,11 @@ function onSeq([lead, follow]: [string?, string?]) {
   return res.valid;
 }
 
+const localCount = ref(0); // 记录当前关卡打对了多少个字
+
 watchPostEffect(() => {
   if (isValid.value) {
+    localCount.value++;
     console.log("✅ [Correct!] 输入正确，准备更新队列...");
     setTimeout(() => {
       const newChar = getNextChar();
@@ -153,6 +156,36 @@ watchPostEffect(() => {
 
       isValid.value = false;
     }, 100);
+  }
+});
+
+// 设定阈值
+const TARGET_ACCURACY = 0.95;
+const TARGET_COUNT = 20;
+const TARGET_SPEED = 30; // 速度达到 30 KPM (汉字/分钟)
+
+watchEffect(() => {
+  const s = summary.value;
+
+  // 判断逻辑：正确率达标 AND 速度达标 AND 练习数量达标 AND 还有下一项
+  if (
+    s.accuracy >= TARGET_ACCURACY &&
+    s.hanziPerMinutes >= TARGET_SPEED && // 新增速度指标判断
+    localCount.value >= TARGET_COUNT &&
+    menuIndex.value < listMenuItems.value.length - 1
+  ) {
+    console.log(
+      `🎯 达成目标！(正确率:${(s.accuracy * 100).toFixed(1)}%, 速度:${s.hanziPerMinutes})`,
+    );
+
+    const nextIndex = menuIndex.value + 1;
+
+    // 执行切换
+    onMenuChange(nextIndex);
+
+    // 重置当前关卡的计数和统计数据，确保下一关重新开始计算
+    localCount.value = 0;
+    summary.value = new TypingSummary();
   }
 });
 </script>
