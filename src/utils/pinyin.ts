@@ -2,58 +2,63 @@ import { product } from "./number";
 
 export const zeroLeadKeys = "a ai an ang ao e ei en eng er o ou".split(" ");
 export const progressiveKeys = [
-  // 第一关：最基础的开口呼
-  "a",
-  "o",
   "e",
-  "b",
-  "p",
-  "m",
-  "f", // 此时解锁：a, o, e, ba, bo, pa, po, ma, mo, me, fa, fo...
-
-  // 第二关：舌尖中音与复韵母初探
   "d",
-  "t",
-  "n",
-  "l",
-  "ai",
-  "ei",
-  "ui", // 此时解锁：da, dai, dei, ta, tai, na, nai, nei, la, lai, lei...
-
-  // 第三关：舌根音与圆唇/收尾音
-  "g",
-  "k",
-  "h",
-  "ao",
-  "ou", // 此时解锁：ga, gao, gou, ka, kao, kou, ha, hao, hou...
-
-  // 第四关：鼻韵母（最难点，放到中间巩固）
-  "an",
-  "en",
-  "ang",
-  "eng",
-
-  // 第五关：舌尖前/后音（平翘舌）
-  "z",
-  "c",
-  "s",
-  "zh",
-  "ch",
-  "sh",
-  "r",
-
-  // 第六关：剩余的齐齿/撮口呼
-  "j",
-  "q",
-  "x",
   "i",
   "u",
-  "v", // 最后补全核心元音，引爆所有剩余组合
-
-  // 第七关：复杂复韵母与特殊音
+  "y",
+  "zh",
+  "sh",
+  "l",
+  "j",
+  "h",
+  "b",
+  "a",
+  "x",
+  "ong",
+  "ao",
+  "g",
+  "ei",
+  "uo",
+  "ai",
+  "an",
+  "w",
+  "en",
+  "t",
+  "z",
+  "ing",
+  "m",
+  "ang",
+  "ian",
+  "iao",
+  "ou",
+  "q",
+  "ch",
+  "eng",
+  "n",
+  "f",
+  "uan",
+  "k",
+  "r",
+  "ui",
+  "in",
+  "iang",
   "ie",
+  "s",
+  "o",
+  "c",
+  "p",
+  "un",
+  "iu",
   "ue",
+  "ia",
   "er",
+  "uai",
+  "ua",
+  "uang",
+  "v",
+  "iong",
+  "ng",
 ];
 export const leadKeys =
   "b p m f d t n l g k h j q x zh ch sh r z c s y w".split(" ");
