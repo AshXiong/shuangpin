@@ -49,17 +49,9 @@ const followList = computed(() => {
  * 将获取到的拼音列表 (followList) 转化为对应的汉字数组
  */
 const hanziList = computed(() => {
-  // 1. 获取所有匹配的汉字并拍平
-  const allHanzi = followList.value.flatMap(cur => {
-    // 确保 cur.full 存在，且 getHanziByPinyin 始终返回数组
-    return getHanziOf(cur.full) || [];
-  });
-
-  // 2. 去重（使用 Set 效率最高）
-  const uniqueHanzi = [...new Set(allHanzi)];
-
-  // 3. 截取前 500 个
-  return uniqueHanzi.slice(0, 500);
+  // 使用 flatMap 替代 reduce + concat
+  // 它会自动遍历 leadList 并将 getHanziByPinyin 返回的数组“拍平”
+  return followList.value.flatMap(cur => getHanziOf(cur.full));
 });
 
 

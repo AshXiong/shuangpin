@@ -9,6 +9,11 @@ import { RouteRecordRaw } from "vue-router";
 
 export const routes: RouteRecordRaw[] = [
   {
+    path: "/progressive-mode",
+    name: "渐进模式",
+    component: ProgressiveMode,
+  },
+  {
     path: "/",
     name: "随机模式",
     component: RandomMode,
@@ -23,11 +28,7 @@ export const routes: RouteRecordRaw[] = [
     name: "韵母模式",
     component: FollowMode,
   },
-  {
-    path: "/progressive-mode",
-    name: "渐进模式",
-    component: ProgressiveMode,
-  },
+
   {
     path: "/p-mode",
     name: "长句模式",
