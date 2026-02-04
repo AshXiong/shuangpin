@@ -59,6 +59,8 @@ const hanziList = computed(() => {
   // 它会自动遍历 leadList 并将 getHanziByPinyin 返回的数组“拍平”
   return followList.value.flatMap((cur) => getHanziOf(cur.full));
 });
+
+
 </script>
 
 <template>
