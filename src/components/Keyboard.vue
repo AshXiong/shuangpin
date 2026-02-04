@@ -169,4 +169,18 @@ function keyItemClass(key: string) {
 <style lang="less">
 @import "../styles/color.less";
 @import "../styles/keyboard.less";
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center; // 整体居中
+
+  .key-row {
+    display: flex;
+    justify-content: center;
+    // 第二行 (asdf...) 向右偏移半个键位
+    &:nth-child(2) {
+      margin-left: 60px; // 根据你的键位宽度调整，通常是 0.5 * keyWidth
+    }
+  }
+}
 </style>

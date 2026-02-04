@@ -85,7 +85,7 @@ export class ShuangpinConfig {
   }
 }
 
-export const keyboardLayout = ["qwertyuiop", " asdfghjkl;", "zxcvbnm"];
+export const keyboardLayout = ["qwertyuiop", "asdfghjkl;", "zxcvbnm"];
 
 export function mergeString([a, b]: string[] = []) {
   if (!(a && b && a.length > 2 && b.length > 2)) {
