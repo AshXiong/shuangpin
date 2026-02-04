@@ -4,7 +4,6 @@ import FollowMode from "./pages/FollowMode.vue";
 import ParagraphMode from "./pages/ParagraphMode.vue";
 import Settings from "./pages/Settings.vue";
 import ProgressiveMode from "./pages/ProgressiveMode.vue";
-import FrequencyMode from "./pages/FrequencyMode.vue"; 
 
 import { RouteRecordRaw } from "vue-router";
 
@@ -18,11 +17,6 @@ export const routes: RouteRecordRaw[] = [
     path: "/",
     name: "随机模式",
     component: RandomMode,
-  },
-  {
-    path: "/frequency-mode",
-    name: "字频模式",
-    component: FrequencyMode,
   },
   {
     path: "/lead-mode",

@@ -19,15 +19,6 @@ const { currentProgressiveIndex } = storeToRefs(store);
 /**
  * 步骤一：根据当前进度索引，获取已激活的音节（键名）列表
  */
-const activeKeys = computed(() => {
-  // 越界检查
-  if (currentProgressiveIndex.value < 0) {
-    return [];
-  }
-
-  // 截取从 0 到当前索引的所有键名
-  return progressiveKeys.slice(0, currentProgressiveIndex.value + 1);
-});
 
 /**
  * 步骤二：将音节（键名表）转换为对应的 Value 数据表
