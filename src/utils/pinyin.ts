@@ -2,7 +2,7 @@ import { product } from "./number";
 
 export const zeroLeadKeys = "a ai an ang ao e ei en eng er o ou".split(" ");
 export const progressiveKeys =
-  " e d i u y zh sh l j h b a x ong ao g ei uo ai an w en t z ing m ang ian iao ou q ch eng n f uan k r ui in iang ie s o c p un iu ue ia er uai ua uang v iong ng".split(
+  "e d i u y zh sh l j h b a x ong ao g ei uo ai an w en t z ing m ang ian iao ou q ch eng n f uan k r ui in iang ie s o c p un iu ue ia er uai ua uang v iong ng".split(
     " ",
   );
 export const leadKeys =
