@@ -22,7 +22,7 @@ declare global {
   type ShuangpinMode = ShuangpinConfig;
 }
 
-export const PresetConfigs = configs;
+
 
 export function encodeShuangpin() {}
 export class ShuangpinConfig {
@@ -184,3 +184,5 @@ export function matchSpToPinyin(
     follow,
   };
 }
+
+export {default as PresetConfigs} from "./spconfig.json";

@@ -1,65 +1,10 @@
 import { product } from "./number";
 
 export const zeroLeadKeys = "a ai an ang ao e ei en eng er o ou".split(" ");
-export const progressiveKeys = [
-  "e",
-  "d",
-  "i",
-  "u",
-  "y",
-  "zh",
-  "sh",
-  "l",
-  "j",
-  "h",
-  "b",
-  "a",
-  "x",
-  "ong",
-  "ao",
-  "g",
-  "ei",
-  "uo",
-  "ai",
-  "an",
-  "w",
-  "en",
-  "t",
-  "z",
-  "ing",
-  "m",
-  "ang",
-  "ian",
-  "iao",
-  "ou",
-  "q",
-  "ch",
-  "eng",
-  "n",
-  "f",
-  "uan",
-  "k",
-  "r",
-  "ui",
-  "in",
-  "iang",
-  "ie",
-  "s",
-  "o",
-  "c",
-  "p",
-  "un",
-  "iu",
-  "ue",
-  "ia",
-  "er",
-  "uai",
-  "ua",
-  "uang",
-  "v",
-  "iong",
-  "ng",
-];
+export const progressiveKeys =
+  " e d i u y zh sh l j h b a x ong ao g ei uo ai an w en t z ing m ang ian iao ou q ch eng n f uan k r ui in iang ie s o c p un iu ue ia er uai ua uang v iong ng".split(
+    " ",
+  );
 export const leadKeys =
   "b p m f d t n l g k h j q x zh ch sh r z c s y w".split(" ");
 
@@ -78,7 +23,6 @@ export const followMap: Map<string, Pinyin[]> = new Map();
 
 import pinyinData from "./pinyin-hanzi.json";
 
-// 强制转换类型方便后续判断
 const pinyinDict = pinyinData as Record<string, string>;
 
 product(leadKeys.concat(""), followKeys).forEach(([lead, follow]) => {
@@ -90,8 +34,6 @@ product(leadKeys.concat(""), followKeys).forEach(([lead, follow]) => {
     full: fullPinyin,
   };
 
-  // 核心逻辑：判断组合后的拼音 key 是否存在于 JSON 中
-  // 原：hanziMap.p2h.has(pinyin.full)
   if (fullPinyin in pinyinDict) {
     validCombines.set(fullPinyin, pinyin);
 

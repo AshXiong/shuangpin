@@ -8,14 +8,12 @@ import {
   watchPostEffect,
   onActivated,
   onDeactivated,
-  onMounted,
-  watchEffect,
+  watchEffect,computed
 } from "vue";
 import { useStore } from "../store";
 import { storeToRefs } from "pinia";
 
 import rawArticles from "../utils/article.json";
-import { computed } from "vue";
 import { getPinyinOf,isValidHanzi } from "../utils/hanzi";
 import { matchSpToPinyin } from "../utils/keyboard";
 import { TypingSummary } from "../utils/summary";
@@ -40,7 +38,7 @@ onDeactivated(() => {
 });
 
 (function checkArticles() {
-  const rawNames = new Set([...Object.keys(rawArticles)]);
+  const rawNames = new Set(Object.keys(rawArticles));
   articles.value.forEach((v) => {
     rawNames.delete(v.type);
   });
@@ -570,7 +568,6 @@ function shortPinyin(pinyins: string[]) {
         font-family: inherit;
         font-size: 14px;
         font-weight: bold;
-        border: 0;
         outline: none;
         padding: 8px;
         height: calc(var(--page-height) - 200px);
