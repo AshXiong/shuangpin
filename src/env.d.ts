@@ -39,10 +39,10 @@ declare type Char =
 type Pinyin = { lead: string; follow: string; full: string };
 
 interface Progress {
-  currentIndex: number = 0;
-  total: number = 0;
-  correctTry: number = 0;
-  totalTry: number = 0;
+  currentIndex: number 
+  total: number 
+  correctTry: number 
+  totalTry: number 
 }
 
 interface Combine {
@@ -82,6 +82,7 @@ type Theme = "auto" | "dark" | "light";
 interface AppState {
   currentLeadIndex: number;
   currentFollowIndex: number;
+  currentProgressiveIndex: number;
   currentArticleIndex: number;
   progresses: Record<string, Progress>;
   localConfigs: Record<string, RawShuangPinConfig>;

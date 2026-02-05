@@ -13,6 +13,7 @@ export const useStore = defineStore("app", {
     return {
       currentLeadIndex: 0,
       currentFollowIndex: 0,
+      currentProgressiveIndex:0,
       currentArticleIndex: 0,
       progresses: {},
       localConfigs: {},

@@ -218,8 +218,6 @@ function editConfig() {
     }
 
     &:hover {
-      // margin-right: 0;
-
       .mode-actions {
         opacity: 1;
       }
