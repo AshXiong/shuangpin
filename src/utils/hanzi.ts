@@ -1,4 +1,5 @@
 import pinyinData from './pinyin-hanzi.json';
+import { pinyin } from 'pinyin-pro';
 
 const pinyinDict = pinyinData as Record<string, string>;
 
@@ -17,11 +18,28 @@ export function getHanziOf(pinyin: string): string[] {
 }
 
 export function getPinyinOf(hanzi: string): string[] {
-  return charToPinyinMap[hanzi?.[0]] || [];
+  if (!hanzi) return [];
+  
+  const char = hanzi[0]; 
+  
+  const backup = pinyin(char, { 
+    multiple: true,  
+    type: 'array',  
+    toneType: 'none'  
+  });
+  return backup.length > 0 && backup[0] !== char ? backup : [];
 }
 
 export function isValidHanzi(char: string): boolean {
-  return char in charToPinyinMap;
+  if (!char) return false;
+  const singleChar = char[0];
+
+  if (singleChar in charToPinyinMap) {
+    return true;
+  }
+  const result = pinyin(singleChar, { pattern: 'pinyin' });
+  
+  return result !== singleChar;
 }
 
 export function isValidPinyin(pinyin: string): boolean {
