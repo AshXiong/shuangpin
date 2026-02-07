@@ -10,7 +10,7 @@
     "fix": "eslint . --ext .ts,.vue --fix",
     "prepare": "husky install",
     "test": "vitest",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npx gh-pages -d dist"
   },
   "dependencies": {
     "less": "^4.2.0",
