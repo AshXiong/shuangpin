@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 const props = defineProps<{
   chars: string[];
 }>();
@@ -13,22 +12,22 @@ const props = defineProps<{
     <div v-if="chars.length === 0" class="cursor" />
   </div>
 </template>
-
 <style lang="less">
 .pinyin-input {
   display: flex;
   font-weight: bold;
-  font-size: 60px;
+  font-size: 32px;
   line-height: 1.2;
 
   .cursor {
     position: relative;
     text-align: center;
     min-height: 1.2em;
-    min-width: 0.5em;
+    min-width: 0.6em;
 
     &:first-child {
-      margin-right: 5px;
+      /* 2. 缩小间距 */
+      margin-right: 3px;
     }
 
     &::after {
@@ -37,9 +36,9 @@ const props = defineProps<{
       left: 0px;
       content: "";
       width: 100%;
-      height: 5px;
+      height: 3px;
       background-color: var(--black);
-      margin-top: 5px;
+      margin-top: 2px;
     }
 
     &:last-child::after {
@@ -52,7 +51,6 @@ const props = defineProps<{
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }

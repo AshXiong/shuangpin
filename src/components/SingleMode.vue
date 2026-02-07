@@ -179,12 +179,13 @@ defineExpose({
       />
     </div>
 
-    <div class="input-area">
-      <Pinyin :chars="pinyin" />
-    </div>
-
-    <div class="hanzi-list">
-      <Hanzi :hanzi-seq="[...hanziSeq]" />
+    <div class="main-focus-area">
+      <div class="hanzi-list">
+        <Hanzi :hanzi-seq="[...hanziSeq]" />
+      </div>
+      <div class="input-area">
+        <Pinyin :chars="pinyin" />
+      </div>
     </div>
 
     <div class="single-keyboard">
@@ -209,56 +210,51 @@ defineExpose({
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
+  justify-content: center;
+  height: 100vh;
 
-  .single-menu {
-    position: absolute;
-    top: 0;
-    left: 100px;
-    z-index: 10;
+  .main-focus-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+
+    margin-top: -200px; /* 向上移动 100 像素，数值根据实际效果调整 */
+
+    .hanzi-list {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin-bottom: 10px;
+    }
+
+    .input-area {
+      margin-bottom: 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
   }
 
   .single-keyboard {
-    position: relative;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 15;
   }
-  .input-area {
-    margin-bottom: 32px;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    z-index: 5;
 
-    @media (max-width: 576px) {
-      margin-top: 30vh;
-    }
+  .single-menu {
+    position: absolute;
+    top: 0px;
+    left: 103px;
+    z-index: 10;
   }
 
   .summary {
     position: absolute;
-    right: var(--app-padding);
-    bottom: var(--app-padding);
-
-    @media (max-width: 576px) {
-      top: 36px;
-    }
-  }
-
-  .hanzi-list {
-    position: absolute;
-    top: var(--app-padding);
-    right: var(--app-padding);
-
-    @media (max-width: 576px) {
-      top: 120px;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .single-keyboard {
-      position: absolute;
-      bottom: 1em;
-    }
+    right: 40px;
+    top: 40px; /* 将 bottom 改为 top */
   }
 }
 </style>

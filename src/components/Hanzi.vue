@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { effect, ref } from "vue";
 import { useStore } from "../store";
-import { getPinyinOf } from "../utils/hanzi";
+import { getSinglePinyinOf } from "../utils/hanzi";
 
 const props = defineProps<{
   hanziSeq: string[];
@@ -19,22 +19,12 @@ function togglePinyin(show: boolean) {
 effect(() => {
   // eslint-disable-next-line vue/no-mutating-props
   currentHanzi.value = props.hanziSeq.pop();
-  pinyin.value = getPinyinOf(currentHanzi.value).at(0) ?? "";
+  pinyin.value = getSinglePinyinOf(currentHanzi.value).at(0) ?? "";
 });
 </script>
 
 <template>
   <div class="displayer">
-    <div
-      v-for="(item, i) in hanziSeq"
-      :key="i"
-      class="follow-item"
-      :style="`opacity: ${i / 4};transform: translateX(-${
-        (hanziSeq.length - i + 1) * 120
-      }%);`"
-    >
-      {{ item }}
-    </div>
     <div
       class="current-outset"
       @mouseover="togglePinyin(true)"
@@ -49,6 +39,17 @@ effect(() => {
           {{ currentHanzi }}
         </div>
       </div>
+    </div>
+
+    <div
+      v-for="(item, i) in hanziSeq"
+      :key="i"
+      class="follow-item"
+      :style="`opacity: ${i / 4}; transform: translateX(${
+        (hanziSeq.length - i + 1) * 120
+      }%);`"
+    >
+      {{ item }}
     </div>
   </div>
 </template>
@@ -78,11 +79,11 @@ effect(() => {
   .follow-item {
     font-size: 36px;
     font-weight: bold;
-    margin-right: 10px;
-    margin-top: -1px;
+    margin-left: 30px; 
+    margin-top: 0px;
     position: absolute;
-    right: 0;
-    transition: all ease 0.3s;
+    left: 0; 
+    transition: all ease 0.5s;
   }
 
   .current-item {
