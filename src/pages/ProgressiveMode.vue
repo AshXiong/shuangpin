@@ -7,7 +7,7 @@ import {
   progressiveKeys,
 } from "../utils/pinyin";
 import { useStore } from "../store";
-import { computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { getHanziOf } from "../utils/hanzi";
 
@@ -23,6 +23,16 @@ interface WeightedPinyin extends PinyinItem {
   characters: string[];
   weight: number;
 }
+
+function shuffle<T>(array: T[]): T[] {
+  const res = [...array];
+  for (let i = res.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [res[i], res[j]] = [res[j], res[i]];
+  }
+  return res;
+}
+
 const hanziList = computed((): string[] => {
   const index = currentProgressiveIndex.value;
   if (index < 0) return [];
@@ -44,7 +54,7 @@ const hanziList = computed((): string[] => {
       .map((p) => ({
         ...p,
         characters: getHanziOf(p.full),
-        weight: 1, 
+        weight: 1,
       }))
       .filter((p) => p.characters.length > 0);
   });
@@ -56,35 +66,81 @@ const hanziList = computed((): string[] => {
     (p) => p.lead !== latestKey && p.follow !== latestKey,
   );
 
-  const BASE_COUNT_PER_PINYIN = 4;
+  const newPool: string[] = [];
+  currentItems.forEach((item) => {
+    newPool.push(...item.characters.slice(0, 2));
+  });
 
   const oldPool: string[] = [];
   oldItems.forEach((item) => {
-    for (let i = 0; i < BASE_COUNT_PER_PINYIN; i++) {
-      oldPool.push(item.characters[i % item.characters.length]);
-    }
+    oldPool.push(...item.characters.slice(0, 2));
   });
-  const newPool: string[] = [];
-  if (currentItems.length > 0) {
-    const targetNewCount =
-      oldPool.length > 0
-        ? oldPool.length
-        : currentItems.length * BASE_COUNT_PER_PINYIN;
 
-    for (let i = 0; i < targetNewCount; i++) {
-      const item = currentItems[i % currentItems.length];
-      newPool.push(
-        item.characters[
-          Math.floor(i / currentItems.length) % item.characters.length
-        ],
-      );
-    }
+  const shuffledNew = shuffle(newPool);
+  const header = shuffledNew.slice(0, 10);
+
+  const remaining = shuffle([...shuffledNew.slice(10), ...oldPool]);
+
+  return [...header, ...remaining];
+});
+
+const currentIndex = ref(0);
+
+const getNextChar = () => {
+  const list = hanziList.value;
+  if (list.length === 0) return "";
+  const char = list[currentIndex.value];
+  currentIndex.value++;
+  if (currentIndex.value >= list.length) {
+    currentIndex.value = list.length > 10 ? 10 : 0;
   }
 
-  return [...oldPool, ...newPool];
+  return char;
+};
+watch(currentProgressiveIndex, () => {
+  currentIndex.value = 0;
 });
+
+const TARGET_ACCURACY = 0.95;
+const TARGET_COUNT = 20;
+const TARGET_SPEED = 35;
+
+function handleValidInput(
+  isValid: boolean,
+  currentStats: { accuracy: number; speed: number; count: number },
+) {
+  if (
+    currentStats.accuracy >= TARGET_ACCURACY &&
+    currentStats.speed >= TARGET_SPEED &&
+    currentStats.count >= TARGET_COUNT &&
+    store.currentProgressiveIndex < progressiveKeys.length - 1
+  ) {
+    store.currentProgressiveIndex++;
+    return true;
+  }
+  return false;
+}
+
+const singleModeRef = ref();
+
+function onStageComplete(stats: {
+  accuracy: number;
+  speed: number;
+  count: number;
+}) {
+  const isLeveledUp = handleValidInput(true, stats);
+  if (isLeveledUp) {
+    singleModeRef.value?.resetStats();
+  }
+}
 </script>
 
 <template>
-  <single-mode :hanzi-list="hanziList" mode="Progressive" />
+  <single-mode
+    ref="singleModeRef"
+    :hanzi-list="hanziList"
+    :next-char="getNextChar"
+    mode="Progressive"
+    @stage-complete="onStageComplete"
+  />
 </template>

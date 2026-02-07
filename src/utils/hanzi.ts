@@ -17,6 +17,14 @@ export function getHanziOf(pinyin: string): string[] {
   return pinyinDict[pinyin.toLowerCase()]?.split('') || [];
 }
 
+
+export function getSinglePinyinOf(hanzi: string): string[] {
+  if (!hanzi) return [];
+  const char = hanzi[0]; 
+  return charToPinyinMap[char] || [];
+}
+
+
 export function getPinyinOf(hanzi: string): string[] {
   if (!hanzi) return [];
   

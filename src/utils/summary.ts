@@ -1,6 +1,8 @@
 export class TypingSummary {
   constructor() {}
 
+  private readonly WINDOW_SIZE = 50;
+  private history: boolean[] = [];  
   onKeyPressed() {
     this.pressCount += 1;
 
@@ -10,6 +12,17 @@ export class TypingSummary {
   onValid(result: boolean) {
     this.totalValid += 1;
     this.totalCorrect += Number(result);
+
+    this.history.push(result);
+    if (this.history.length > this.WINDOW_SIZE) {
+      this.history.shift(); 
+    }
+  }
+
+  get slidingAccuracy() {
+    if (this.history.length === 0) return 0;
+    const correctCount = this.history.filter(v => v).length;
+    return correctCount / this.history.length;
   }
 
   /**

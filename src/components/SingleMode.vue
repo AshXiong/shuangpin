@@ -9,13 +9,12 @@ import {
   onActivated,
   onDeactivated,
   ref,
-  watchEffect,
   watchPostEffect,
   computed,
 } from "vue";
 import { matchSpToPinyin } from "../utils/keyboard";
 import { useStore } from "../store";
-import { getPinyinOf } from "../utils/hanzi";
+import { getSinglePinyinOf } from "../utils/hanzi";
 import { TypingSummary } from "../utils/summary";
 import { followKeys, leadKeys, progressiveKeys } from "../utils/pinyin";
 import { randInt } from "../utils/number";
@@ -28,12 +27,16 @@ export interface SingleModeProps {
 }
 
 function getNextChar() {
-  if (!props.mode) {
-    return props.nextChar?.() ?? "";
+  if (props.nextChar) {
+    return props.nextChar();
   }
-  return props.hanziList?.[randInt(props.hanziList?.length)] ?? "";
-}
 
+  if (props.mode) {
+    return props.hanziList?.[randInt(props.hanziList?.length)] ?? "";
+  }
+
+  return "";
+}
 const pinyin = ref<string[]>([]);
 
 const store = useStore();
@@ -102,7 +105,7 @@ onDeactivated(() => {
 });
 
 const answer = computed(() => {
-  const pys = getPinyinOf(hanziSeq.value.at(-1) ?? "");
+  const pys = getSinglePinyinOf(hanziSeq.value.at(-1) ?? "");
   return pys.at(0) ?? "";
 });
 
@@ -133,11 +136,22 @@ function onSeq([lead, follow]: [string?, string?]) {
   return res.valid;
 }
 
+const emit = defineEmits<{
+  "stage-complete": [stats: { accuracy: number; speed: number; count: number }];
+}>();
+
 const localCount = ref(0);
 
 watchPostEffect(() => {
   if (isValid.value) {
     localCount.value++;
+
+    emit("stage-complete", {
+      accuracy: summary.value.slidingAccuracy,
+      speed: summary.value.hanziPerMinutes,
+      count: localCount.value,
+    });
+
     setTimeout(() => {
       const newChar = getNextChar();
       hanziSeq.value.unshift(newChar);
@@ -147,30 +161,12 @@ watchPostEffect(() => {
   }
 });
 
-
-
-
-const TARGET_ACCURACY = 0.95;
-const TARGET_COUNT = 20;
-const TARGET_SPEED = 30;
-
-watchEffect(() => {
-  const s = summary.value;
-  if (
-    s.accuracy >= TARGET_ACCURACY &&
-    s.hanziPerMinutes >= TARGET_SPEED &&
-    localCount.value >= TARGET_COUNT &&
-    menuIndex.value < listMenuItems.value.length - 1 &&
-    props.mode === "Progressive"
-  ) {
-    const nextIndex = menuIndex.value + 1;
-    onMenuChange(nextIndex);
+defineExpose({
+  resetStats: () => {
     localCount.value = 0;
     summary.value = new TypingSummary();
-  }
+  },
 });
-
-
 </script>
 
 <template>
@@ -198,7 +194,7 @@ watchEffect(() => {
     <div class="summary">
       <TypeSummary
         :speed="summary.hanziPerMinutes"
-        :accuracy="summary.accuracy"
+        :accuracy="summary.slidingAccuracy"
         :avgpress="summary.pressPerHanzi"
       />
     </div>
