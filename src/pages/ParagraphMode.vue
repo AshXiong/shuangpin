@@ -45,11 +45,11 @@ onDeactivated(() => {
 
   rawNames.forEach((v) => {
     const name = v as RawArticleName;
-    const progress: Progress = {
+   const progress: Progress = {
       currentIndex: 0,
       total: rawArticles[name].length,
-      correctTry: 0,
-      totalTry: 0,
+      history: [],    
+      correctSum: 0,  
     };
 
     articles.value.push({ progress, type: name });
@@ -227,8 +227,8 @@ function saveArticle() {
     progress: {
       currentIndex: 0,
       total: editingContent.value.length,
-      correctTry: 0,
-      totalTry: 0,
+      history: [],
+      correctSum: 0,
     },
   });
 
