@@ -18,12 +18,12 @@ function getActiveContext(idx: number) {
   return { activeKeys, latestKey, activeLeads };
 }
 
-function sampleCharacters(chars: string[], count: number): string[] {
+function pickTopCharacters(chars: string[], count: number): string[] {
   if (chars.length === 0) return [];
   return Array.from({ length: count }, (_, i) => chars[i % chars.length]);
 }
 
-const SAMPLES_PER_PINYIN = 4;
+const TOP_FREQ_CHARS_PER_PINYIN = 4;
 function categorizeHanzi(idx: number) {
   const { activeKeys, latestKey, activeLeads } = getActiveContext(idx);
   const currentItems: string[] = [];
@@ -37,8 +37,8 @@ function categorizeHanzi(idx: number) {
     for (const p of list) {
       if (!activeLeads.has(p.lead)) continue;
 
-      const allCharacters = getHanziOf(p.full);
-      const sampled = sampleCharacters(allCharacters, SAMPLES_PER_PINYIN);
+      const charsSortedByFreq = getHanziOf(p.full);
+      const sampled = pickTopCharacters(charsSortedByFreq, TOP_FREQ_CHARS_PER_PINYIN);
       if (sampled.length === 0) continue;
 
       const isNew = p.lead === latestKey || p.follow === latestKey;
@@ -49,23 +49,26 @@ function categorizeHanzi(idx: number) {
   return { currentItems, oldItems };
 }
 
+const PREVIEW_LIST_SIZE = 10;
 function interleaveLists(
   shuffledNew: string[],
   shuffledOld: string[],
-  headerSize = 10,
+  headerSize: number = PREVIEW_LIST_SIZE,
 ): string[] {
-  const header = shuffledNew.slice(0, headerSize);
-  const remainingNew = shuffledNew.slice(headerSize);
-
-  const mixed: string[] = [];
-  const max = Math.max(remainingNew.length, shuffledOld.length);
-
+  const previewSession =pickTopCharacters(shuffledNew,headerSize);
+  const trainingPool: string[] = [];
+  const max = Math.max(shuffledNew.length, shuffledOld.length);
   for (let i = 0; i < max; i++) {
-    if (i < remainingNew.length) mixed.push(remainingNew[i]);
-    if (i < shuffledOld.length) mixed.push(shuffledOld[i]);
+    if (i < shuffledNew.length) {
+      trainingPool.push(shuffledNew[i]);
+    }
+    if (i < shuffledOld.length) {
+      trainingPool.push(shuffledOld[i]);
+    }
   }
-
-  return [...header, ...mixed];
+  shuffle(trainingPool);
+  const result = [...previewSession, ...trainingPool];
+  return result;
 }
 
 export function useProgressiveLogic(currentProgressiveIndex: Ref<number>) {
@@ -93,6 +96,9 @@ export function useProgressiveLogic(currentProgressiveIndex: Ref<number>) {
   );
 
   const getNextChar = () => {
+
+    const loopStartIndex = PREVIEW_LIST_SIZE;
+
     const list = hanziList.value;
     if (list.length === 0) return "";
 
@@ -100,7 +106,7 @@ export function useProgressiveLogic(currentProgressiveIndex: Ref<number>) {
     let nextIdx = currentIndex.value + 1;
 
     if (nextIdx >= list.length) {
-      nextIdx = list.length > 10 ? 10 : 0;
+      nextIdx = list.length > loopStartIndex ? loopStartIndex : 0;
     }
 
     currentIndex.value = nextIdx;

@@ -136,8 +136,17 @@ function onSeq([lead, follow]: [string?, string?]) {
   return res.valid;
 }
 
+export interface KeyAccuracy {
+  key: string;
+  accuracy: number;
+}
+
 const emit = defineEmits<{
-  "stage-complete": [stats: { accuracy: number; speed: number; count: number }];
+  (
+    e: "stage-complete",
+    stats: { accuracy: number; speed: number; count: number },
+  ): void;
+  (e: "progress-update", data: { key: string; accuracy: number }[]): void;
 }>();
 
 const localCount = ref(0);
@@ -151,6 +160,11 @@ watchPostEffect(() => {
       speed: summary.value.hanziPerMinutes,
       count: localCount.value,
     });
+    const accuracyData = progresses.value.map((v) => ({
+      key: v.key,
+      accuracy: store.getAccuracy(v.key),
+    }));
+    emit("progress-update", accuracyData);
 
     setTimeout(() => {
       const newChar = getNextChar();
