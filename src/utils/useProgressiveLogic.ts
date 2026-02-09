@@ -23,7 +23,7 @@ function pickTopCharacters(chars: string[], count: number): string[] {
   return Array.from({ length: count }, (_, i) => chars[i % chars.length]);
 }
 
-const TOP_FREQ_CHARS_PER_PINYIN = 4;
+const TOP_FREQ_CHARS_PER_PINYIN = 10;
 function categorizeHanzi(idx: number) {
   const { activeKeys, latestKey, activeLeads } = getActiveContext(idx);
   const currentItems: string[] = [];
@@ -38,7 +38,10 @@ function categorizeHanzi(idx: number) {
       if (!activeLeads.has(p.lead)) continue;
 
       const charsSortedByFreq = getHanziOf(p.full);
-      const sampled = pickTopCharacters(charsSortedByFreq, TOP_FREQ_CHARS_PER_PINYIN);
+      const sampled = pickTopCharacters(
+        charsSortedByFreq,
+        TOP_FREQ_CHARS_PER_PINYIN,
+      );
       if (sampled.length === 0) continue;
 
       const isNew = p.lead === latestKey || p.follow === latestKey;
@@ -53,21 +56,15 @@ const PREVIEW_LIST_SIZE = 10;
 function interleaveLists(
   shuffledNew: string[],
   shuffledOld: string[],
-  headerSize: number = PREVIEW_LIST_SIZE,
-): string[] {
-  const previewSession =pickTopCharacters(shuffledNew,headerSize);
-  const trainingPool: string[] = [];
-  const max = Math.max(shuffledNew.length, shuffledOld.length);
-  for (let i = 0; i < max; i++) {
-    if (i < shuffledNew.length) {
-      trainingPool.push(shuffledNew[i]);
-    }
-    if (i < shuffledOld.length) {
-      trainingPool.push(shuffledOld[i]);
-    }
+  headerSize = PREVIEW_LIST_SIZE,
+) {
+  const previewSession = shuffledNew.slice(0, headerSize);
+  const trainingPool = [];
+  for (let i = 0; i < shuffledOld.length; i++) {
+    const newChar = shuffledNew[i % shuffledNew.length];
+    trainingPool.push(newChar, shuffledOld[i]);
   }
-  shuffle(trainingPool);
-  const result = [...previewSession, ...trainingPool];
+  const result = [...previewSession, ...shuffle(trainingPool)];
   return result;
 }
 
@@ -96,7 +93,6 @@ export function useProgressiveLogic(currentProgressiveIndex: Ref<number>) {
   );
 
   const getNextChar = () => {
-
     const loopStartIndex = PREVIEW_LIST_SIZE;
 
     const list = hanziList.value;

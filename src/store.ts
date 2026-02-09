@@ -7,7 +7,7 @@ declare global {
 }
 
 const cache: Record<string, ShuangpinConfig> = {};
-const WINDOW_SIZE = 100;
+const WINDOW_SIZE = 50;
 export const useStore = defineStore("app", {
   state: (): AppState => {
     return {

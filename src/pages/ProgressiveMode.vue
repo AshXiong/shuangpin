@@ -13,7 +13,10 @@ const CONFIG = {
 };
 
 const getTargetCount = (index: number) => {
-  return CONFIG.TARGET_COUNT + Math.floor(index / 2) * 5;
+  const PREVIEW_SIZE = 10;
+  const MIN_TRAINING_SIZE = 15;
+  const difficultyBonus = Math.floor(index / 3) * 5;
+  return PREVIEW_SIZE + MIN_TRAINING_SIZE + difficultyBonus;
 };
 
 const store = useStore();
