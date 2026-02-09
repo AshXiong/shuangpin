@@ -11,6 +11,7 @@ import {
   ref,
   watchPostEffect,
   computed,
+  watch,
 } from "vue";
 import { matchSpToPinyin } from "../utils/keyboard";
 import { useStore } from "../store";
@@ -174,6 +175,23 @@ watchPostEffect(() => {
     }, 100);
   }
 });
+
+
+watch([() => props.mode, () => menuIndex.value], () => {
+  refreshPartialSequence();
+}, { immediate: false });
+
+
+function refreshPartialSequence() {
+  const currentChar = hanziSeq.value.at(-1) || getNextChar();
+  hanziSeq.value = [
+    getNextChar(),
+    getNextChar(),
+    getNextChar(),
+    currentChar
+  ];
+  isValid.value = false;
+}
 
 defineExpose({
   resetStats: () => {
