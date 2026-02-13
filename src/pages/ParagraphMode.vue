@@ -8,13 +8,14 @@ import {
   watchPostEffect,
   onActivated,
   onDeactivated,
-  watchEffect,computed
+  watchEffect,
+  computed,
 } from "vue";
 import { useStore } from "../store";
 import { storeToRefs } from "pinia";
 
 import rawArticles from "../utils/article.json";
-import { getPinyinOf,isValidHanzi } from "../utils/hanzi";
+import { getPinyinOf, isValidHanzi } from "../utils/hanzi";
 import { matchSpToPinyin } from "../utils/keyboard";
 import { TypingSummary } from "../utils/summary";
 import MenuList from "../components/MenuList.vue";
@@ -45,11 +46,11 @@ onDeactivated(() => {
 
   rawNames.forEach((v) => {
     const name = v as RawArticleName;
-   const progress: Progress = {
+    const progress: Progress = {
       currentIndex: 0,
       total: rawArticles[name].length,
-      history: [],    
-      correctSum: 0,  
+      history: [],
+      correctSum: 0,
     };
 
     articles.value.push({ progress, type: name });
@@ -333,11 +334,10 @@ function shortPinyin(pinyins: string[]) {
     </div>
 
     <Keyboard v-if="!isEditing" :valid-seq="onSeq" :hints="article.spHints" />
-
     <div v-if="!isEditing" class="summary">
       <TypeSummary
         :speed="summary.hanziPerMinutes"
-        :accuracy="summary.accuracy"
+        :accuracy="summary.totalAccuracy"
         :avgpress="summary.pressPerHanzi"
       />
     </div>

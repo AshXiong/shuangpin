@@ -31,8 +31,10 @@ const buildBooleanOption = (name: string): SettingOption<boolean> => ({
   name,
 });
 
-type SettingKeys = keyof Omit<Settings, "shuangpinMode">;
-
+type SettingKeys = keyof Omit<
+  Settings,
+  "shuangpinMode" | "targetSpeed" | "targetAccuracy"
+>;
 const settingOptions: {
   [_ in SettingKeys]: SettingOption<boolean | Theme>;
 } = {
@@ -61,7 +63,7 @@ function nextOption(name: SettingKeys) {
 function getOptionName(name: SettingKeys) {
   const setting = settingOptions[name];
   const index = setting.options.findIndex(
-    (v) => v.option === settings.value[name]
+    (v) => v.option === settings.value[name],
   );
   const safeIndex = Math.max(index, 0);
   return setting.options[safeIndex].name;
@@ -97,7 +99,7 @@ function deleteMode() {
   if (confirm("确认删除？")) {
     store.deleteConfig(spName.value);
     settings.value.shuangpinMode = store.modes.at(
-      Math.max(currentIndex.value, -1)
+      Math.max(currentIndex.value, -1),
     ) as ShuangpinType;
     spName.value = settings.value.shuangpinMode;
   }

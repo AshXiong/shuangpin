@@ -26,6 +26,8 @@ export const useStore = defineStore("app", {
         enablePinyinHint: true,
         theme: "auto",
         shuangpinMode: "小鹤双拼",
+        targetSpeed: 35,      
+        targetAccuracy: 95, 
       },
     };
   },

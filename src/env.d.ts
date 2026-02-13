@@ -75,6 +75,8 @@ interface Settings {
   enablePinyinHint: boolean; // 拼音提示
   enableAutoClear: boolean; // 自动清空
   shuangpinMode: ShuangpinType;
+  targetSpeed: number;    // 目标速度 (WPM/KPM)
+  targetAccuracy: number; // 目标准确率 (0-100)
 }
 
 type Theme = "auto" | "dark" | "light";
