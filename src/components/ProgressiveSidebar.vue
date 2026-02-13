@@ -31,7 +31,7 @@ const rangeConfigs = {
       <div :class="['arrow-icon', { 'is-active': isOpen }]"></div>
     </button>
 
-    <div class="sidebar-inner" v-if="isOpen">
+    <div class="sidebar-inner">
       <h3 class="sidebar-title">训练设置</h3>
 
       <div class="range-setting-container">
@@ -55,6 +55,20 @@ const rangeConfigs = {
           />
         </div>
       </div>
+    </div>
+
+    <div class="setting-tips">
+      <div class="tips-header">
+        <span class="tips-title">调节建议</span>
+      </div>
+      <ul class="tips-list">
+        <li>
+          <strong>先准后快：</strong> 双拼初期由于键位陌生，速度会比全拼慢，这很正常。切勿盲目加速，错误的肌肉记忆很难纠正。请务必确保<span class="highlight">准确率优先（95%+）</span>，速度自然水到渠成。
+        </li>
+        <li>
+          <strong>速度参考：</strong> 0-40 WPM 新手（键位记忆阶段，需看键盘或思考）， 40-60 WPM 入门（形成肌肉记忆，不再卡顿），60-80 WPM 舒适区（日常基准线，注意力回归内容），80+ WPM 精通（行云流水，人机合一）。
+        </li>
+      </ul>
     </div>
   </aside>
 </template>
@@ -204,6 +218,55 @@ const rangeConfigs = {
 
       &:hover {
         transform: scale(1.1);
+      }
+    }
+  }
+
+  .setting-tips {
+    margin-top: 8px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.03); 
+    border-radius: 12px;
+    border-left: 3px solid @primary-color;
+
+    .tips-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+
+      .tips-icon {
+        font-size: 1.1rem;
+      }
+
+      .tips-title {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: var(--black);
+        opacity: 0.8;
+      }
+    }
+
+    .tips-list {
+      margin: 0;
+      padding-left: 18px; 
+      list-style-type: disc;
+
+      li {
+        font-size: 0.75rem;
+        line-height: 1.6;
+        color: var(--black);
+        opacity: 0.6;
+        margin-bottom: 6px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .highlight {
+          color: @primary-color;
+          font-weight: bold;
+        }
       }
     }
   }
