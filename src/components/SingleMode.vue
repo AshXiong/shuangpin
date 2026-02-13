@@ -172,7 +172,7 @@ watchPostEffect(() => {
       hanziSeq.value.unshift(newChar);
       hanziSeq.value.pop();
       isValid.value = false;
-    }, 100);
+    }, 30);
   }
 });
 

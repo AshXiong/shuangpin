@@ -6,21 +6,14 @@ import { useProgressiveLogic } from "../utils/useProgressiveLogic";
 import SingleMode from "../components/SingleMode.vue";
 import { progressiveKeys } from "../utils/pinyin";
 
-const CONFIG = {
-  TARGET_ACCURACY: 0.95,
-  TARGET_COUNT: 20,
-  TARGET_SPEED: 35,
-};
-
 const getTargetCount = (index: number) => {
   const PREVIEW_SIZE = 10;
   const MIN_TRAINING_SIZE = 15;
   const difficultyBonus = Math.floor(index / 3) * 5;
   return PREVIEW_SIZE + MIN_TRAINING_SIZE + difficultyBonus;
 };
-
 const store = useStore();
-const { currentProgressiveIndex } = storeToRefs(store);
+const { currentProgressiveIndex, settings } = storeToRefs(store);
 const singleModeRef = ref();
 
 const { hanziList, getNextChar } = useProgressiveLogic(currentProgressiveIndex);
@@ -32,17 +25,20 @@ const isPerformanceMet = (stats: {
 }) => {
   const targetCount = getTargetCount(currentProgressiveIndex.value);
   const currentKey = progressiveKeys[currentProgressiveIndex.value];
+
+  const targetAcc = settings.value.targetAccuracy / 100;
+  const targetSpd = settings.value.targetSpeed;
+
   const keyStat = latestKeysAccuracy.value.find(
     (item) => item.key === currentKey,
   );
-  const isKeyMastered = keyStat
-    ? keyStat.accuracy >= CONFIG.TARGET_ACCURACY
-    : false;
+
+  const isKeyMastered = keyStat ? keyStat.accuracy >= targetAcc : false;
 
   return (
-    stats.accuracy >= CONFIG.TARGET_ACCURACY &&
+    stats.accuracy >= targetAcc &&
     isKeyMastered &&
-    stats.speed >= CONFIG.TARGET_SPEED &&
+    stats.speed >= targetSpd &&
     stats.count >= targetCount
   );
 };
