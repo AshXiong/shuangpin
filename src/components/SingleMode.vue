@@ -4,7 +4,7 @@ import Hanzi from "../components/Hanzi.vue";
 import Pinyin from "../components/Pinyin.vue";
 import TypeSummary from "../components/TypeSummary.vue";
 import MenuList from "../components/MenuList.vue";
-
+import Sidebar from "../components/ProgressiveSidebar.vue";
 import {
   onActivated,
   onDeactivated,
@@ -176,20 +176,17 @@ watchPostEffect(() => {
   }
 });
 
-
-watch([() => props.mode, () => menuIndex.value], () => {
-  refreshPartialSequence();
-}, { immediate: false });
-
+watch(
+  [() => props.mode, () => menuIndex.value],
+  () => {
+    refreshPartialSequence();
+  },
+  { immediate: false },
+);
 
 function refreshPartialSequence() {
   const currentChar = hanziSeq.value.at(-1) || getNextChar();
-  hanziSeq.value = [
-    getNextChar(),
-    getNextChar(),
-    getNextChar(),
-    currentChar
-  ];
+  hanziSeq.value = [getNextChar(), getNextChar(), getNextChar(), currentChar];
   isValid.value = false;
 }
 
@@ -199,6 +196,16 @@ defineExpose({
     summary.value = new TypingSummary();
   },
 });
+
+const isSidebarOpen = ref(false);
+watch(
+  () => props.mode,
+  (newMode) => {
+    if (newMode !== "Progressive") {
+      isSidebarOpen.value = false;
+    }
+  },
+);
 </script>
 
 <template>
@@ -231,6 +238,10 @@ defineExpose({
         :avgpress="summary.pressPerHanzi"
       />
     </div>
+    <Sidebar
+      v-show="props.mode === 'Progressive'"
+      v-model:is-open="isSidebarOpen"
+    />
   </div>
 </template>
 
@@ -251,7 +262,7 @@ defineExpose({
     align-items: center;
     margin-bottom: 20px;
 
-    margin-top: -200px; /* 向上移动 100 像素，数值根据实际效果调整 */
+    margin-top: -200px;
 
     .hanzi-list {
       position: relative;
@@ -286,7 +297,7 @@ defineExpose({
   .summary {
     position: absolute;
     right: 40px;
-    top: 40px; /* 将 bottom 改为 top */
+    top: 40px; 
   }
 }
 </style>

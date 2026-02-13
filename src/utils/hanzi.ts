@@ -33,9 +33,14 @@ export function getPinyinOf(hanzi: string): string[] {
   const backup = pinyin(char, { 
     multiple: true,  
     type: 'array',  
-    toneType: 'none'  
+    toneType: 'none'
   });
-  return backup.length > 0 && backup[0] !== char ? backup : [];
+
+  if (backup.length > 0 && backup[0] !== char) {
+    return backup.map(p => p.replaceAll('ü', 'v'));
+  }
+
+  return [];
 }
 
 export function isValidHanzi(char: string): boolean {
