@@ -154,20 +154,39 @@ export function mapConfigToLayout(config: ShuangpinMode) {
 
 export function matchSpToPinyin(
   mode: ShuangpinConfig,
-  leadKey: Char,
-  followKey: Char,
+  leadKey: string,
+  followKey: string,
   targetPinyin: string,
 ) {
   const sp = (leadKey ?? "") + (followKey ?? "");
-
   const standardAnswers = mode.getStandardAnswers([targetPinyin]);
-
   const isValid = !!leadKey && !!followKey && standardAnswers.includes(sp);
+  let lead = leadKey;
+  let follow = followKey;
+
+  if (isValid) {
+    if (mode.py2sp.get(targetPinyin) === sp) {
+      const match = /^(zh|ch|sh|[bpmfdtnlgkhjqxrwyzsc])/.exec(targetPinyin.replaceAll("v", "ü"));
+      if (match) {
+        lead = match[0];
+        follow = targetPinyin.slice(lead.length);
+      } else {
+        lead = "〇";
+        follow = targetPinyin;
+      }
+    }
+  } else {
+    const leadConfig = mode.groupByKey.get(leadKey);
+    const followConfig = mode.groupByKey.get(followKey);
+    
+    if (leadConfig?.leads?.length) lead = leadConfig.leads[0];
+    if (followConfig?.follows?.length) follow = followConfig.follows[0];
+  }
 
   return {
     valid: isValid,
-    lead: isValid ? targetPinyin : leadKey,
-    follow: isValid ? "" : followKey,
+    lead: lead,
+    follow: follow,
   };
 }
 
